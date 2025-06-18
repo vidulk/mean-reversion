@@ -1,0 +1,18 @@
+# Ignore configuration files with secrets
+live_trader_config.py
+.env
+hist_data/
+api_test.ipynb
+
+# Ignore log files
+*.log
+
+# Ignore Python cache files
+__pycache__/
+*.pyc
+
+# Ignore large binary model files (optional but recommended)
+*.joblib
+
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints/

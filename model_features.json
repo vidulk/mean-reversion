@@ -1,0 +1,13 @@
+[
+    "profit_potential",
+    "break_type",
+    "bb_percent",
+    "rsi",
+    "macd",
+    "macd_signal",
+    "price_change_1",
+    "price_change_5",
+    "volatility",
+    "hour",
+    "day_of_week"
+]
