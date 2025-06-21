@@ -1,13 +1,22 @@
 [
-    "profit_potential",
-    "break_type",
+    "open",
+    "high",
+    "low",
+    "close",
+    "bb_middle",
+    "bb_upper",
+    "bb_lower",
     "bb_percent",
+    "ema_50",
+    "stoch_k",
     "rsi",
+    "adx",
     "macd",
     "macd_signal",
-    "price_change_1",
-    "price_change_5",
-    "volatility",
     "hour",
-    "day_of_week"
+    "day_of_week",
+    "dt_of_exit",
+    "exit_price",
+    "tp_price",
+    "sl_price"
 ]

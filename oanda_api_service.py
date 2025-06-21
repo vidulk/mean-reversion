@@ -3,7 +3,8 @@ import oandapyV20.endpoints.pricing as pricing
 import oandapyV20.endpoints.instruments as instruments
 import oandapyV20.endpoints.orders as orders
 import oandapyV20.endpoints.trades as trades
-import oandapyV20.endpoints.accounts as accounts  # <-- Add this import
+import oandapyV20.endpoints.accounts as accounts
+import oandapyV20.endpoints.transactions as transactions # <-- Add this import
 from oandapyV20.contrib.requests import MarketOrderRequest, StopLossDetails, TakeProfitDetails
 import pandas as pd
 
@@ -98,3 +99,64 @@ def get_open_trades(api_client, instrument_name: str):
     except Exception as e:
         print(f"Error fetching open trades: {e}")
         return None
+
+def get_transactions_in_range(api_client, from_date: str, to_date: str):
+    """
+    Fetches account transactions within a given date range.
+    Dates should be in RFC3339 format (e.g., '2025-06-01T00:00:00Z').
+    NOTE: This function fetches up to 1000 transactions, which is the API limit
+    per request. For more, pagination would be required.
+    """
+    params = {
+        "from": from_date,
+        "to": to_date,
+        "pageSize": 1000  # Max page size
+    }
+    
+    # The correct, instantiable class is transactions.TransactionIDRange
+    r = transactions.TransactionIDRange(accountID=OANDA_ACCOUNT_ID, params=params)
+    try:
+        api_client.request(r)
+        all_transactions = r.response.get('transactions', [])
+        
+        
+        if len(all_transactions) == 1000:
+            print("Warning: Fetched 1000 transactions, the maximum per request. Some older trades might be missing.")
+            
+        return all_transactions
+    except Exception as e:
+        print(f"Error fetching transactions: {e}")
+        return []
+
+def get_recent_transactions(api_client, count=500):
+    """
+    Fetches the most recent transactions for the account.
+    """
+    params = {
+        "pageSize": count  # Fetch up to 'count' transactions
+    }
+    # Using TransactionIDRange without date params should return the most recent transactions.
+    r = transactions.TransactionIDRange(accountID=OANDA_ACCOUNT_ID, params=params)
+    try:
+        api_client.request(r)
+        return r.response.get('transactions', [])
+    except Exception as e:
+        print(f"Error fetching recent transactions: {e}")
+        return []
+
+def get_closed_trades(api_client, count=50):
+    """
+    Fetches the most recently closed trades for the account. This is much more
+    reliable than parsing the full transaction history.
+    """
+    params = {
+        "state": "CLOSED",  # Specify that we only want closed trades
+        "count": count      # The number of recent trades to get
+    }
+    r = trades.TradesList(accountID=OANDA_ACCOUNT_ID, params=params)
+    try:
+        api_client.request(r)
+        return r.response.get('trades', [])
+    except Exception as e:
+        print(f"Error fetching closed trades: {e}")
+        return []
